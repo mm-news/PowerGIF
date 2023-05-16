@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* global document, Office */
 
 const tenor_api_key = "AIzaSyAc2OphGysCfd2YVwWlIDd73yPzWJqGflM";
@@ -7,30 +8,30 @@ Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
-    document.getElementById("run").onclick = run;
-    document.getElementById("InsertImage").onclick = insertImage;
-    document.getElementById("q").onchange = grab_data_from_tenor;
+    document.getElementById("q").onchange = grab_data_from_tenor_luncher;
+    document.getElementById("preview_gif").onclick = insertImageLuncher;
   }
 });
 
-export async function run() {
-  /**
-   * Insert your PowerPoint code here
-   */
-  const options = { coercionType: Office.CoercionType.Text };
+function insertImageLuncher(event) {
+  if (event.target.src.startsWith("https://")) {
+    insertImage(document.getElementById("preview_gif").alt);
+  } else {
+    insertImage();
+  }
+}
 
-  await Office.context.document.setSelectedDataAsync(" ", options);
-  await Office.context.document.setSelectedDataAsync("Hello World!", options);
+function grab_data_from_tenor_luncher() {
+  grab_data_from_tenor(document.getElementById("q").value);
 }
 
 function insertImage(
   url = "https://th.bing.com/th/id/R.1e01fe36388e7453ab926c23b190827c?rik=pQoqct3ys2U8zg&pid=ImgRaw&r=0"
 ) {
+  console.log("url: " + url);
   convertImageToBase64FromURL(url)
     .then((base64Image) => {
-      console.log(base64Image);
-      console.log(base64Image.split(",")[1]);
-      insertImageToPowerPoint(base64Image.split(",")[1])
+      insertImageToPowerPoint(base64Image.split(",")[1]);
     })
     .catch((err) => console.log(err));
 }
@@ -100,13 +101,14 @@ function tenorCallback_search(responsetext) {
 
   document.getElementById("preview_gif").src = top_10_gifs[0]["media_formats"]["nanogif"]["url"];
 
-  document.getElementById("share_gif").src = top_10_gifs[0]["media_formats"]["gif"]["url"];
+  document.getElementById("preview_gif").alt = top_10_gifs[0]["media_formats"]["gif"]["url"];
 
   return;
 }
 
 // function to call the trending and category endpoints
-function grab_data_from_tenor(search_term = document.getElementById("q").value) {
+function grab_data_from_tenor(search_term = "YEAH!") {
+  console.log("search_term: " + search_term);
   // set the apikey and limit
   var apikey = tenor_api_key;
   var clientkey = "PowerGIF";
