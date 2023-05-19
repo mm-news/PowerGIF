@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-undef */
 /* global document, Office */
 
@@ -9,13 +10,12 @@ Office.onReady((info) => {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
     document.getElementById("q").onchange = grab_data_from_tenor_luncher;
-    document.getElementById("preview_gif").onclick = insertImageLuncher;
   }
 });
 
 function insertImageLuncher(event) {
   if (event.target.src.startsWith("https://")) {
-    insertImage(document.getElementById("preview_gif").alt);
+    insertImage(event.target.alt);
   } else {
     insertImage();
   }
@@ -25,9 +25,7 @@ function grab_data_from_tenor_luncher() {
   grab_data_from_tenor(document.getElementById("q").value);
 }
 
-function insertImage(
-  url = "https://th.bing.com/th/id/R.1e01fe36388e7453ab926c23b190827c?rik=pQoqct3ys2U8zg&pid=ImgRaw&r=0"
-) {
+function insertImage(url = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif") {
   console.log("url: " + url);
   convertImageToBase64FromURL(url)
     .then((base64Image) => {
@@ -99,20 +97,31 @@ function tenorCallback_search(responsetext) {
 
   // load the GIFs -- for our example we will load the first GIFs preview size (nanogif) and share size (gif)
 
-  document.getElementById("preview_gif").src = top_10_gifs[0]["media_formats"]["nanogif"]["url"];
+  document.getElementById("preview_gif_0").src = top_10_gifs[0]["media_formats"]["nanogif"]["url"];
+  document.getElementById("preview_gif_0").alt = top_10_gifs[0]["media_formats"]["gif"]["url"];
+  document.getElementById("preview_gif_0").onclick = insertImageLuncher;
 
-  document.getElementById("preview_gif").alt = top_10_gifs[0]["media_formats"]["gif"]["url"];
+  for (var i = 1; i < top_10_gifs.length - 1; i++) {
+    var img_tag = document.createElement("img");
+    img_tag.id = "preview_gif_" + i;
+    var container = document.getElementById("tenor-gifs");
+    container.appendChild(img_tag);
+    document.getElementById("preview_gif_" + i).src = top_10_gifs[i]["media_formats"]["nanogif"]["url"];
+    document.getElementById("preview_gif_" + i).alt = top_10_gifs[i]["media_formats"]["gif"]["url"];
+    document.getElementById("preview_gif_" + i).onclick = insertImageLuncher;
+    document.getElementById("preview_gif_" + i).className = "gif-preview";
+  }
 
   return;
 }
 
 // function to call the trending and category endpoints
-function grab_data_from_tenor(search_term = "YEAH!") {
+function grab_data_from_tenor(search_term = "money") {
   console.log("search_term: " + search_term);
   // set the apikey and limit
   var apikey = tenor_api_key;
   var clientkey = "PowerGIF";
-  var lmt = 8;
+  var lmt = 10;
 
   // using default locale of en_US
   var search_url =
