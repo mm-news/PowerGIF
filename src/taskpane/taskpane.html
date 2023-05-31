@@ -8,7 +8,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Contoso Task Pane Add-in</title>
+    <title>PowerGIF</title>
 
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
@@ -18,19 +18,32 @@
 
     <!-- Template styles -->
     <link href="taskpane.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="ms-font-m ms-welcome ms-Fabric">
     <section id="sideload-msg" class="ms-welcome__main">
-        <h2 class="ms-font-xl">Please reload your add-in to see app body.</h2>
+        <h2 class="ms-font-xl">Please reload PowerGIF to see app body.</h2>
     </section>
     <header>
         <input type="text" name="q" id="q" style="width: 90%;" value="money">
     </header>
     <main id="app-body" class="ms-welcome__main" style="display: none;">
-        <h2>GIF From Tenor</h2>
-        <div id="tenor-gifs" style="text-align: center;">
-            <img id="preview_gif_0" src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="" class="gif-preview">
+        <div class="content">
+            <h2>GIFs From <a href="#tenor-gifs">Tenor</a> and <a href="#giphy-gifs">Giphy</a></h2>
+            <h3>Tenor</h3>
+            <div id="tenor-gifs" class="gif-container">
+                <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" class="gif-preview">
+            </div>
+            <h3>Giphy</h3>
+            <div id="giphy-gifs" class="gif-container">
+                <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" class="gif-preview">
+            </div>
+        </div>
+        <div id="placeholder" style="background-color: white;">
+            <h2 style="height: 55px; color: #7c7c7c;" id="loading-gifs"><b>Scroll to bottom to load more GIFs</b></h2>
+            <h2 style="height: 55px; color: #7c7c7c;" id="no-more-gifs" class="no-display"><b>No More GIFs</b></h2>
         </div>
     </main>
     <footer>
