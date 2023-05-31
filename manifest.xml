@@ -73,11 +73,11 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="PowerGIF"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Undefined Studio Apps"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="PowerGIF"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="PowerGIF loaded succesfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
+        <bt:String id="GetStarted.Description" DefaultValue="PowerGIF loaded succesfully. Go to the HOME tab and click the 'PowerGIF' button."/>
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to Show PowerGIF"/>
       </bt:LongStrings>
     </Resources>
