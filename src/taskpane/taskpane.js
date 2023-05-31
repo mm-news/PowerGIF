@@ -4,8 +4,7 @@
 const tenor_api_key = "AIzaSyAc2OphGysCfd2YVwWlIDd73yPzWJqGflM";
 const giphy_api_key = "Z81NqORdTMOb6Qhsm1PD4a2pzFiHOM0X";
 
-var limit_t = 10;
-var limit_g = 10;
+var limit = 5;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -25,9 +24,8 @@ function insertImageLuncher(event) {
 
 window.addEventListener("scroll", function () {
   if (isAtBottom()) {
-    limit_t += 10;
-    limit_g += 10;
-    grab_gif(document.getElementById("q").value, limit_g, limit_t);
+    limit += 5;
+    grab_gif(document.getElementById("q").value, limit);
   }
 });
 
@@ -42,23 +40,23 @@ function isAtBottom() {
 }
 
 function grab_gif_luncher() {
-  limit_t = limit_g = 10;
+  limit = 10;
   grab_gif(document.getElementById("q").value);
   document.getElementById("loading-gifs").className = "";
   document.getElementById("no-more-gifs").className = "no-display";
 }
 
-async function grab_gif(q = "money", lmt_g = limit_g, lmt_t = limit_t) {
+async function grab_gif(q = "money", lmt = limit) {
   var tenor_response_objects = [];
   var giphy_response_objects = [];
 
   try {
-    tenor_response_objects = await grab_data_from_tenor(q, lmt_t);
+    tenor_response_objects = await grab_data_from_tenor(q, lmt);
   } catch (error) {
     console.log(error);
   }
 
-  giphy_response_objects = await grab_data_from_giphy(q, lmt_g);
+  giphy_response_objects = await grab_data_from_giphy(q, lmt);
 
   insertGIFtoHtml(tenor_response_objects, giphy_response_objects);
 }
@@ -73,40 +71,33 @@ function insertImage(url = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/gip
 }
 
 function insertGIFtoHtml(tenor, giphy) {
-  document.getElementById("tenor-gifs").innerHTML = "";
+  document.getElementById("gifs").innerHTML = "";
 
-  if (tenor.length < limit_g) {
+  if (tenor.length < limit && giphy.length < limit) {
     document.getElementById("loading-gifs").className = "no-display";
     document.getElementById("no-more-gifs").className = "";
   }
-  for (var i = 0; i < tenor.length - 1; i++) {
-    var img_tag_t = document.createElement("img");
-    var container_t = document.getElementById("tenor-gifs");
-    container_t.appendChild(img_tag_t);
-    img_tag_t.src = tenor[i]["media_formats"]["nanogif"]["url"];
-    img_tag_t.alt = tenor[i]["media_formats"]["gif"]["url"];
-    img_tag_t.onclick = insertImageLuncher;
-    img_tag_t.className = "gif-preview";
-  }
+  for (var t = (g = 0); t < tenor.length || t < giphy.length; t++, g++) {
+    if (t < tenor.length) {
+      var img_tag_t = document.createElement("img");
+      var container_t = document.getElementById("gifs");
+      container_t.appendChild(img_tag_t);
+      img_tag_t.src = tenor[t]["media_formats"]["nanogif"]["url"];
+      img_tag_t.alt = tenor[t]["media_formats"]["gif"]["url"];
+      img_tag_t.onclick = insertImageLuncher;
+      img_tag_t.className = "gif-preview";
+    }
+    if (g < giphy.length) {
+      var img_tag_g = document.createElement("img");
+      var container_g = document.getElementById("gifs");
 
-  document.getElementById("giphy-gifs").innerHTML = "";
+      container_g.appendChild(img_tag_g);
 
-  if (giphy.length < limit_g) {
-    document.getElementById("loading-gifs").className = "no-display";
-    document.getElementById("no-more-gifs").className = "";
-  }
-  for (var j = 0; j < giphy.length - 1; j++) {
-    var img_tag_g = document.createElement("img");
-    var container_g = document.getElementById("giphy-gifs");
-
-    container_g.appendChild(img_tag_g);
-
-    img_tag_g.src = giphy[j]["images"]["fixed_height"]["url"];
-    console.log(giphy[j]["images"]["fixed_height"]["url"]); //debug
-    img_tag_g.alt = giphy[j]["images"]["original"]["url"];
-    console.log(giphy[j]["images"]["original"]["url"]); //debug
-    img_tag_g.onclick = insertImageLuncher;
-    img_tag_g.className = "gif-preview";
+      img_tag_g.src = giphy[g]["images"]["fixed_height"]["url"];
+      img_tag_g.alt = giphy[g]["images"]["original"]["url"];
+      img_tag_g.onclick = insertImageLuncher;
+      img_tag_g.className = "gif-preview";
+    }
   }
 
   return;
@@ -145,7 +136,7 @@ function convertImageToBase64FromURL(url) {
     });
 }
 
-function grab_data_from_tenor(search_term = "money", lmt = limit_t) {
+function grab_data_from_tenor(search_term = "money", lmt = limit) {
   return new Promise(function (resolve, reject) {
     console.log("search_term: " + search_term); //debug
     console.log("lmt: " + lmt); //debug
@@ -180,7 +171,7 @@ function grab_data_from_tenor(search_term = "money", lmt = limit_t) {
   });
 }
 
-function grab_data_from_giphy(q, lmt = limit_g) {
+function grab_data_from_giphy(q, lmt = limit) {
   if (lmt >= 50) {
     lmt = 49; //Giphy API limit
   }
