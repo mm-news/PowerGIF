@@ -1,3 +1,7 @@
+---
+permalink: /taskpane.js
+---
+
 /* eslint-disable no-undef */
 /* global document, Office */
 
@@ -5,14 +9,74 @@ const tenor_api_key = "AIzaSyAc2OphGysCfd2YVwWlIDd73yPzWJqGflM";
 const giphy_api_key = "Z81NqORdTMOb6Qhsm1PD4a2pzFiHOM0X";
 
 var limit = 5;
+var source_tenor = true;
+var source_giphy = true;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
     document.getElementById("q").onchange = grab_gif_luncher;
+    document.getElementById("search-button").onclick = grab_gif_luncher;
+    document.getElementById("choose-source").className = "source-no-display";
+    document.getElementById("filter-button").onclick = show_chooser;
+    document.getElementById("x-mark").onclick = hide_chooser;
+    document.getElementById("source-tenor").onclick = set_source_tenor;
+    document.getElementById("source-giphy").onclick = set_source_giphy;
   }
 });
+
+function set_source_tenor() {
+  if (document.getElementById("source-tenor").checked) {
+    source_tenor = true;
+    document.getElementById("source-giphy").disabled = false;
+  } else {
+    if (source_giphy == false) {
+      document.getElementById("source-giphy").checked = true;
+      document.getElementById("source-giphy").disabled = true;
+      source_giphy = true;
+      source_tenor = false;
+    } else {
+      source_tenor = false;
+    }
+  }
+  grab_gif_luncher();
+}
+
+function set_source_giphy() {
+  if (document.getElementById("source-giphy").checked) {
+    source_giphy = true;
+    document.getElementById("source-tenor").disabled = false;
+  } else {
+    if (source_tenor == false) {
+      document.getElementById("source-tenor").checked = true;
+      document.getElementById("source-tenor").disabled = true;
+      source_tenor = true;
+      source_giphy = false;
+    } else {
+      source_giphy = false;
+    }
+  }
+  grab_gif_luncher();
+}
+
+function show_chooser() {
+  if (document.getElementById("choose-source").className === "source-no-display") {
+    document.getElementById("choose-source").className = "";
+    document.getElementById("header").className = "header-with-source-chooser";
+    document.getElementById("content").className = "content-with-source-chooser";
+    document.getElementById("filter-button").onclick = hide_chooser;
+  }
+}
+
+function hide_chooser() {
+  if (document.getElementById("choose-source").className === "") {
+    document.getElementById("choose-source").className = "source-no-display";
+    document.getElementById("header").className = "header";
+    document.getElementById("content").className = "content";
+    document.getElementById("filter-button").onclick = show_chooser;
+  }
+}
 
 function insertImageLuncher(event) {
   if (event.target.src.startsWith("https://")) {
@@ -40,23 +104,28 @@ function isAtBottom() {
 }
 
 function grab_gif_luncher() {
-  limit = 10;
+  limit = 5;
   grab_gif(document.getElementById("q").value);
   document.getElementById("loading-gifs").className = "";
   document.getElementById("no-more-gifs").className = "no-display";
+  window.location.href = "#header";
 }
 
 async function grab_gif(q = "money", lmt = limit) {
   var tenor_response_objects = [];
   var giphy_response_objects = [];
 
-  try {
-    tenor_response_objects = await grab_data_from_tenor(q, lmt);
-  } catch (error) {
-    console.log(error);
+  if (source_tenor) {
+    try {
+      tenor_response_objects = await grab_data_from_tenor(q, lmt);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  giphy_response_objects = await grab_data_from_giphy(q, lmt);
+  if (source_giphy) {
+    giphy_response_objects = await grab_data_from_giphy(q, lmt);
+  }
 
   insertGIFtoHtml(tenor_response_objects, giphy_response_objects);
 }
@@ -76,7 +145,14 @@ function insertGIFtoHtml(tenor, giphy) {
   if (tenor.length < limit && giphy.length < limit) {
     document.getElementById("loading-gifs").className = "no-display";
     document.getElementById("no-more-gifs").className = "";
+  } else {
+    document.getElementById("loading-gifs").className = "";
+    document.getElementById("no-more-gifs").className = "no-display";
   }
+
+  console.log("tenor length: " + tenor.length); // debug
+  console.log("giphy length: " + giphy.length); // debug
+
   for (var t = (g = 0); t < tenor.length || t < giphy.length; t++, g++) {
     if (t < tenor.length) {
       var img_tag_t = document.createElement("img");
@@ -138,8 +214,8 @@ function convertImageToBase64FromURL(url) {
 
 function grab_data_from_tenor(search_term = "money", lmt = limit) {
   return new Promise(function (resolve, reject) {
-    console.log("search_term: " + search_term); //debug
-    console.log("lmt: " + lmt); //debug
+    console.log("search_term: " + search_term);
+    console.log("lmt: " + lmt);
     // set the apikey
     var apikey = tenor_api_key;
     var clientkey = "PowerGIF";
