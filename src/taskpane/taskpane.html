@@ -1,5 +1,6 @@
-<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
-<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+---
+permalink: /taskpane.html
+---
 
 <!DOCTYPE html>
 <html>
@@ -9,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PowerGIF</title>
+    <base href="https://studio-undefined.github.io/PowerGIF/src/taskpane">
 
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
@@ -17,20 +19,35 @@
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
 
     <!-- Template styles -->
-    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+    <link href="/taskpane.css" rel="stylesheet" type="text/css" />
 
+    <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- font awesome -->
+    <script src="https://kit.fontawesome.com/da2e246beb.js" crossorigin="anonymous"></script>
+
+    <meta name="robots" content="noindex">
 </head>
 
 <body class="ms-font-m ms-welcome ms-Fabric">
     <section id="sideload-msg" class="ms-welcome__main">
         <h2 class="ms-font-xl">Please reload PowerGIF to see app body.</h2>
     </section>
-    <header>
-        <input type="text" name="q" id="q" style="width: 90%;" value="money">
+    <header id="header" class="header">
+        <input type="text" name="q" id="q" style="width: 80%;" value="money">
+        <i class="fa-solid fa-magnifying-glass" id="search-button"></i>
+        <i class="fa-solid fa-filter" id="filter-button"></i>
+        <div id="choose-source" class="source-chooser">
+            <label for="source-tenor">GIF from Tenor:</label>
+            <input type="checkbox" id="source-tenor" checked>
+            <label for="source-giphy">GIPHY</label>
+            <input type="checkbox" id="source-giphy" checked>
+            <i class="fa-solid fa-xmark" id="x-mark"></i>
+        </div>
     </header>
     <main id="app-body" class="ms-welcome__main" style="display: none;">
-        <div class="content">
+        <div class="content" id="content">
             <div id="gifs" class="gif-container">
                 <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" class="gif-preview">
             </div>
