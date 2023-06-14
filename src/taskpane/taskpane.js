@@ -1,7 +1,3 @@
----
-permalink: /taskpane.js
----
-
 /* eslint-disable no-undef */
 /* global document, Office */
 
